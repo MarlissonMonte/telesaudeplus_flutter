@@ -10,76 +10,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _cpfController = TextEditingController();
-  bool _cpfValido = false;
-  bool _cpfVerificado = false;
+  final _emailController = TextEditingController();
+  bool _emailValido = false;
 
-  // Função para validar CPF
-  bool _validarCPF(String cpf) {
-    // Remove caracteres não numéricos
-    cpf = cpf.replaceAll(RegExp(r'[^0-9]'), '');
-    
-    if (cpf.length != 11) return false;
-
-    // Verifica se todos os dígitos são iguais
-    if (RegExp(r'^(\d)\1*$').hasMatch(cpf)) return false;
-
-    // Calcula primeiro dígito verificador
-    int soma = 0;
-    for (int i = 0; i < 9; i++) {
-      soma += int.parse(cpf[i]) * (10 - i);
-    }
-    int digito1 = 11 - (soma % 11);
-    if (digito1 > 9) digito1 = 0;
-
-    // Calcula segundo dígito verificador
-    soma = 0;
-    for (int i = 0; i < 10; i++) {
-      soma += int.parse(cpf[i]) * (11 - i);
-    }
-    int digito2 = 11 - (soma % 11);
-    if (digito2 > 9) digito2 = 0;
-
-    return (digito1 == int.parse(cpf[9]) && digito2 == int.parse(cpf[10]));
-  }
-
-  // Função para formatar CPF
-  void _formatarCPF(String value) {
-    var cpf = value.replaceAll(RegExp(r'[^0-9]'), '');
-    
-    if (cpf.length >= 3) {
-      cpf = cpf.substring(0, 3) + '.' + cpf.substring(3);
-    }
-    if (cpf.length >= 7) {
-      cpf = cpf.substring(0, 7) + '.' + cpf.substring(7);
-    }
-    if (cpf.length >= 11) {
-      cpf = cpf.substring(0, 11) + '-' + cpf.substring(11);
-    }
-    
-    if (cpf != value) {
-      _cpfController.value = TextEditingValue(
-        text: cpf,
-        selection: TextSelection.collapsed(offset: cpf.length),
-      );
-    }
-
-    if (cpf.length == 14) {
-      setState(() {
-        _cpfVerificado = true;
-        _cpfValido = _validarCPF(cpf);
-      });
-    } else {
-      setState(() {
-        _cpfVerificado = false;
-        _cpfValido = false;
-      });
-    }
+  // Função para validar e-mail
+  bool _validarEmail(String email) {
+    return RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(email);
   }
 
   @override
   void dispose() {
-    _cpfController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -94,25 +35,25 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
-              controller: _cpfController,
+              controller: _emailController,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.grey[200],
-                labelText: 'CPF',
-                border: OutlineInputBorder(),
-                suffixIcon: _cpfVerificado
-                    ? Icon(
-                        _cpfValido ? Icons.check_circle : Icons.error,
-                        color: _cpfValido ? Colors.green : Colors.red,
-                      )
+                fillColor: Colors.grey[200], // Corrigido: removi o `const InputDecoration`
+                labelText: 'E-mail',
+                border: const OutlineInputBorder(),
+                suffixIcon: _emailValido
+                    ? const Icon(Icons.check_circle, color: Colors.green)
                     : null,
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.emailAddress,
               inputFormatters: [
-                LengthLimitingTextInputFormatter(14),
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]|-')),
+                FilteringTextInputFormatter.deny(RegExp(r'\s')), // Impede espaços no e-mail
               ],
-              onChanged: _formatarCPF,
+              onChanged: (value) {
+                setState(() {
+                  _emailValido = _validarEmail(value);
+                });
+              },
             ),
             const SizedBox(height: 16),
             TextField(
@@ -130,18 +71,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 backgroundColor: Colors.green,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: _cpfValido ? () {
-                // Aqui você deve implementar a validação real da senha
-                // Por enquanto, vamos apenas navegar para a HomeScreen
+              onPressed: _emailValido
+                  ? () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => const HomeScreen(
-                      nomeClient: "Maria Aparecida", // Isso deve vir do backend
+                      nomeClient: "Maria Aparecida", // Simulação de login
                     ),
                   ),
                 );
-              } : null,
+              }
+                  : null,
               child: const Text('Entrar', style: TextStyle(color: Colors.white)),
             ),
           ],
@@ -149,4 +90,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-} 
+}

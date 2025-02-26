@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../models/user.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'token_validation_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -114,6 +115,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _cadastrarUsuario() async {
+    // Por enquanto, vamos navegar diretamente para a tela de token
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TokenValidationScreen(
+          email: _emailController.text,
+        ),
+      ),
+    );
+
+    // Código da API comentado por enquanto
+    /*
     try {
       final usuario = User(
         cpf: _cpfController.text.replaceAll(RegExp(r'[^0-9]'), ''),
@@ -123,12 +136,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       final response = await http.post(
-        Uri.parse('http://localhost:3000/usuarios'),
+        Uri.parse('http://10.0.2.2:3000/cadastro'),
         body: jsonEncode(usuario.toJson()),
+        headers: {"Content-Type": "application/json"},
       );
 
       if (response.statusCode == 201) {
-        // Cadastro realizado com sucesso
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -136,10 +149,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               backgroundColor: Colors.green,
             ),
           );
-          Navigator.pop(context); // Volta para a tela anterior
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TokenValidationScreen(
+                email: _emailController.text,
+              ),
+            ),
+          );
         }
       } else {
-        // Erro no cadastro
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -159,6 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
     }
+    */
   }
 
   @override
