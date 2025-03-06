@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart';
-import 'register_screen.dart';
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -23,14 +23,7 @@ class WelcomeScreen extends StatelessWidget {
                   backgroundColor: Colors.green,
                   minimumSize: const Size(200, 50),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const LoginScreen(),
-                    ),
-                  );
-                },
+                onPressed: () => Get.toNamed(AppRoutes.login),
                 child: const Text(
                   'Entrar',
                   style: TextStyle(color: Colors.white),
@@ -42,14 +35,7 @@ class WelcomeScreen extends StatelessWidget {
                   backgroundColor: Colors.lightBlue[50],
                   minimumSize: const Size(200, 50),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterScreen(),
-                    ),
-                  );
-                },
+                onPressed: () => Get.toNamed(AppRoutes.register),
                 child: const Text('Cadastrar'),
               ),
             ],

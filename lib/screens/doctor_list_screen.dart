@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/doctor.dart';
 import '../screens/availability_screen.dart';
+import '../routes/app_routes.dart';
 
 class DoctorListScreen extends StatefulWidget {
   const DoctorListScreen({super.key});
@@ -139,13 +141,9 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AvailabilityScreen(
-                                        doctor: doctor,
-                                      ),
-                                    ),
+                                  Get.toNamed(
+                                    AppRoutes.availability,
+                                    arguments: {'doctor': doctor},
                                   );
                                 },
                                 child: const Text(

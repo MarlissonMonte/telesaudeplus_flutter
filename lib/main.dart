@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/welcome_screen.dart';
+import 'package:get/get.dart';
+import 'routes/app_routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,13 +11,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Telesaude',
+    return GetMaterialApp(
+      title: 'TeleSaude Plus+',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const WelcomeScreen(),
+      debugShowCheckedModeBanner: false,
+      initialRoute: AppRoutes.welcome,
+      getPages: AppRoutes.routes,
     );
   }
 }

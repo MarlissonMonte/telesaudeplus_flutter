@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 
 class TokenValidationScreen extends StatefulWidget {
   final String email;
@@ -48,19 +50,14 @@ class _TokenValidationScreenState extends State<TokenValidationScreen> {
         if (!mounted) return;
 
         if (response.statusCode == 200) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Token validado com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
+          Get.snackbar(
+            'Sucesso',
+            'Token validado com sucesso!',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
           );
           
-          // Navega para a tela de login após validação bem-sucedida
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-            (route) => false,
-          );
+          Get.offAllNamed(AppRoutes.login);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

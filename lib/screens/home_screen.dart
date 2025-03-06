@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'doctor_list_screen.dart';
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 
 class HomeScreen extends StatelessWidget {
   final String nomeClient;
@@ -38,14 +39,7 @@ class HomeScreen extends StatelessWidget {
             _buildOptionCard(
               icon: Icons.calendar_today,
               title: 'Agendar uma consulta',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DoctorListScreen(),
-                  ),
-                );
-              },
+              onTap: () => Get.toNamed(AppRoutes.doctorList),
             ),
             const SizedBox(height: 20),
             _buildOptionCard(

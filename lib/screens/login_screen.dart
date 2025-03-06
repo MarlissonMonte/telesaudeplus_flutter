@@ -12,6 +12,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   bool _emailValido = false;
+  bool _isLoading = false;
 
   // Função para validar e-mail
   bool _validarEmail(String email) {
@@ -71,19 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 backgroundColor: Colors.green,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              onPressed: _emailValido
-                  ? () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomeScreen(
-                      nomeClient: "Maria Aparecida", // Simulação de login
-                    ),
-                  ),
-                );
-              }
-                  : null,
-              child: const Text('Entrar', style: TextStyle(color: Colors.white)),
+              onPressed: () {},
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Entrar', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

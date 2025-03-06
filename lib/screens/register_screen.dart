@@ -4,6 +4,11 @@ import '../models/user.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'token_validation_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubits/register/register_cubit.dart';
+import '../cubits/register/register_state.dart';
+import 'package:get/get.dart';
+import '../routes/app_routes.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -115,70 +120,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _cadastrarUsuario() async {
-    // Por enquanto, vamos navegar diretamente para a tela de token
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TokenValidationScreen(
-          email: _emailController.text,
-        ),
-      ),
+    final cubit = context.read<RegisterCubit>();
+    
+    await cubit.register(
+      cpf: _cpfController.text.replaceAll(RegExp(r'[^0-9]'), ''),
+      nome: _nomeController.text,
+      email: _emailController.text,
+      senha: _senhaController.text,
     );
-
-    // Código da API comentado por enquanto
-    /*
-    try {
-      final usuario = User(
-        cpf: _cpfController.text.replaceAll(RegExp(r'[^0-9]'), ''),
-        nome: _nomeController.text,
-        email: _emailController.text,
-        senha: _senhaController.text,
-      );
-
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/cadastro'),
-        body: jsonEncode(usuario.toJson()),
-        headers: {"Content-Type": "application/json"},
-      );
-
-      if (response.statusCode == 201) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Cadastro realizado com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TokenValidationScreen(
-                email: _emailController.text,
-              ),
-            ),
-          );
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Erro no cadastro: ${response.body}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao conectar com o servidor: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-    */
   }
 
   @override
@@ -193,129 +142,161 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlue[100],
-      appBar: AppBar(title: const Text('Cadastrar')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _cpfController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[200],
-                labelText: 'CPF',
-                border: OutlineInputBorder(),
-                suffixIcon: _cpfVerificado
-                    ? Icon(
-                        _cpfValido ? Icons.check_circle : Icons.error,
-                        color: _cpfValido ? Colors.green : Colors.red,
-                      )
-                    : null,
+    return BlocListener<RegisterCubit, RegisterState>(
+      listener: (context, state) {
+        if (state.status == RegisterStatus.success) {
+          Get.snackbar(
+            'Sucesso',
+            'Cadastro realizado com sucesso!',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+          Get.offNamed(
+            AppRoutes.tokenValidation,
+            arguments: {'email': _emailController.text},
+          );
+        } else if (state.status == RegisterStatus.failure) {
+          Get.snackbar(
+            'Erro',
+            state.errorMessage ?? 'Erro ao cadastrar',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      },
+      child: BlocBuilder<RegisterCubit, RegisterState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.lightBlue[100],
+            appBar: AppBar(title: const Text('Cadastrar')),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _cpfController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      labelText: 'CPF',
+                      border: OutlineInputBorder(),
+                      suffixIcon: _cpfVerificado
+                          ? Icon(
+                              _cpfValido ? Icons.check_circle : Icons.error,
+                              color: _cpfValido ? Colors.green : Colors.red,
+                            )
+                          : null,
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(14),
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]|-')),
+                    ],
+                    onChanged: _formatarCPF,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _nomeController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      labelText: 'Nome',
+                      border: OutlineInputBorder(),
+                      helperText: 'Mínimo de 4 caracteres',
+                      suffixIcon: _nomeController.text.isNotEmpty
+                          ? Icon(
+                              _nomeValido ? Icons.check_circle : Icons.error,
+                              color: _nomeValido ? Colors.green : Colors.red,
+                            )
+                          : null,
+                    ),
+                    onChanged: _validarNome,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                      suffixIcon: _emailController.text.isNotEmpty
+                          ? Icon(
+                              _emailValido ? Icons.check_circle : Icons.error,
+                              color: _emailValido ? Colors.green : Colors.red,
+                            )
+                          : null,
+                    ),
+                    onChanged: _validarEmail,
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _senhaController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      labelText: 'Senha',
+                      border: OutlineInputBorder(),
+                      helperText: 'Mínimo de 6 caracteres',
+                      suffixIcon: _senhaController.text.isNotEmpty
+                          ? Icon(
+                              _senhaValida ? Icons.check_circle : Icons.error,
+                              color: _senhaValida ? Colors.green : Colors.red,
+                            )
+                          : null,
+                    ),
+                    obscureText: true,
+                    onChanged: (value) {
+                      _validarSenhas();
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _confirmarSenhaController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey[200],
+                      labelText: 'Confirmar senha',
+                      border: OutlineInputBorder(),
+                      suffixIcon: _mostrarValidacaoSenha
+                          ? Icon(
+                              _senhasIguais ? Icons.check_circle : Icons.error,
+                              color: _senhasIguais ? Colors.green : Colors.red,
+                            )
+                          : null,
+                      errorText: _mostrarValidacaoSenha && !_senhasIguais
+                          ? 'As senhas não coincidem'
+                          : null,
+                    ),
+                    obscureText: true,
+                    onChanged: (value) {
+                      _validarSenhas();
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    onPressed: state.status == RegisterStatus.loading
+                        ? null
+                        : (_cpfValido && _nomeValido && _emailValido && 
+                           _senhaValida && _senhasIguais)
+                            ? _cadastrarUsuario
+                            : null,
+                    child: state.status == RegisterStatus.loading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text('Cadastrar', 
+                            style: TextStyle(color: Colors.white)),
+                  ),
+                ],
               ),
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(14),
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]|-')),
-              ],
-              onChanged: _formatarCPF,
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _nomeController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[200],
-                labelText: 'Nome',
-                border: OutlineInputBorder(),
-                helperText: 'Mínimo de 4 caracteres',
-                suffixIcon: _nomeController.text.isNotEmpty
-                    ? Icon(
-                        _nomeValido ? Icons.check_circle : Icons.error,
-                        color: _nomeValido ? Colors.green : Colors.red,
-                      )
-                    : null,
-              ),
-              onChanged: _validarNome,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[200],
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-                suffixIcon: _emailController.text.isNotEmpty
-                    ? Icon(
-                        _emailValido ? Icons.check_circle : Icons.error,
-                        color: _emailValido ? Colors.green : Colors.red,
-                      )
-                    : null,
-              ),
-              onChanged: _validarEmail,
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _senhaController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[200],
-                labelText: 'Senha',
-                border: OutlineInputBorder(),
-                helperText: 'Mínimo de 6 caracteres',
-                suffixIcon: _senhaController.text.isNotEmpty
-                    ? Icon(
-                        _senhaValida ? Icons.check_circle : Icons.error,
-                        color: _senhaValida ? Colors.green : Colors.red,
-                      )
-                    : null,
-              ),
-              obscureText: true,
-              onChanged: (value) {
-                _validarSenhas();
-              },
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _confirmarSenhaController,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[200],
-                labelText: 'Confirmar senha',
-                border: OutlineInputBorder(),
-                suffixIcon: _mostrarValidacaoSenha
-                    ? Icon(
-                        _senhasIguais ? Icons.check_circle : Icons.error,
-                        color: _senhasIguais ? Colors.green : Colors.red,
-                      )
-                    : null,
-                errorText: _mostrarValidacaoSenha && !_senhasIguais
-                    ? 'As senhas não coincidem'
-                    : null,
-              ),
-              obscureText: true,
-              onChanged: (value) {
-                _validarSenhas();
-              },
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              onPressed: (_cpfValido && _nomeValido && _emailValido && 
-                         _senhaValida && _senhasIguais)
-                  ? _cadastrarUsuario
-                  : null,
-              child: const Text('Cadastrar', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
-} 
+}
