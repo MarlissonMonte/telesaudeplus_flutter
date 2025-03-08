@@ -11,6 +11,7 @@ import '../repositories/auth_repository.dart';
 import '../cubits/register/register_cubit.dart';
 import '../models/doctor.dart';
 import '../services/api_service.dart';
+import '../cubits/login/login_cubit.dart';
 
 class AppRoutes {
   static const String welcome = '/';
@@ -30,7 +31,14 @@ class AppRoutes {
     ),
     GetPage(
       name: login,
-      page: () => const LoginScreen(),
+      page: () => BlocProvider(
+        create: (context) => LoginCubit(
+          authRepository: AuthRepository(
+            apiService: apiService,
+          ),
+        ),
+        child: const LoginScreen(),
+      ),
     ),
     GetPage(
       name: register,

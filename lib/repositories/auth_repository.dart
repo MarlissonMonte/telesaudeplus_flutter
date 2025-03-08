@@ -34,4 +34,17 @@ class AuthRepository {
       body: {'email': email},
     );
   }
+
+  Future<Map<String, dynamic>> login({
+    required String email,
+    required String senha,
+  }) async {
+    return _apiService.post(
+      '/login',
+      body: {
+        'email': email,
+        'senha': senha,
+      },
+    );
+  }
 }

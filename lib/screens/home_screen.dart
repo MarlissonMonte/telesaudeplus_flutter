@@ -12,13 +12,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final nome = nomeClient.isNotEmpty ? nomeClient : 'Usuário';
+    
     return Scaffold(
       backgroundColor: Colors.lightBlue[100],
       appBar: AppBar(
-          title: const Text('TeleSaude Plus+'),
-          leading: IconButton(
+        title: const Text('TeleSaude Plus+'),
+        leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.green),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Get.back(),
         ),
       ),
       body: Padding(
@@ -28,7 +30,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 60),
             Text(
-              '$nomeClient,\ncomo posso te ajudar hoje?',
+              '$nome,\ncomo posso te ajudar hoje?',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w500,
