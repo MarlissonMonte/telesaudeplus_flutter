@@ -7,6 +7,7 @@ import '../screens/token_validation_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/doctor_list_screen.dart';
 import '../screens/availability_screen.dart';
+import '../screens/video_call_screen.dart';
 import '../repositories/auth_repository.dart';
 import '../cubits/register/register_cubit.dart';
 import '../models/doctor.dart';
@@ -21,6 +22,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String doctorList = '/doctor-list';
   static const String availability = '/availability';
+  static const String videoCall = '/video-call';
 
   static final apiService = ApiService();
 
@@ -72,6 +74,10 @@ class AppRoutes {
       page: () => AvailabilityScreen(
         doctor: Get.arguments['doctor'] as Doctor,
       ),
+    ),
+    GetPage(
+      name: videoCall,
+      page: () => const VideoCallScreen(),
     ),
   ];
 }
