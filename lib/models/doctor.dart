@@ -3,16 +3,16 @@ class Doctor {
   final String name;
   final String specialty;
   final String imageUrl;
-  final String crm;
-  final double rating;
+  final String? crm;
+  final double? rating;
 
   Doctor({
     required this.id,
     required this.name,
     required this.specialty,
     required this.imageUrl,
-    required this.crm,
-    required this.rating,
+    this.crm,
+    this.rating,
   });
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
@@ -22,7 +22,7 @@ class Doctor {
       specialty: json['specialty'] as String,
       imageUrl: json['image_url'] as String,
       crm: json['crm'] as String,
-      rating: (json['rating'] as num).toDouble(),
+      rating: (json['rating'] as num).toDouble()?? 0,
     );
   }
 } 
