@@ -2,39 +2,29 @@ import 'dart:async';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-void main() => runApp(const MyApp());
-// Fill in the app ID obtained from Agora Console
+
 const appId = "0bd5051c48e94ca799ad873e186a761e";
-// Fill in the temporary token generated from Agora Console
 const token = "007eJxTYFixskBtCnPNu6uSH5/4vPZZkjDB/O68mKzjXZUBuY6zGYMUGAySUkwNTA2TTSxSLU2SE80tLRNTLMyNUw0tzBLNzQxTezgvpTcEMjJcVGVnZGSAQBCfm6EktbgkNTEnsyAzn4EBAEvJIfE=";
-// Fill in the channel name you used to generate the token
 const channel = "testealipio";
-// Main App Widget
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+
+class VideoCallScreen extends StatefulWidget {
+  const VideoCallScreen({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MainScreen(),
-    );
-  }
+  _VideoCallScreenState createState() => _VideoCallScreenState();
 }
-// Video Call Screen Widget
-class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
-  @override
-  _MainScreenScreenState createState() => _MainScreenScreenState();
-}
-class _MainScreenScreenState extends State<MainScreen> {
-  int? _remoteUid; // Stores remote user ID
-  bool _localUserJoined = false; // Indicates if local user has joined the channel
-  late RtcEngine _engine; // Stores Agora RTC Engine instance
+
+class _VideoCallScreenState extends State<VideoCallScreen> {
+  int? _remoteUid;
+  bool _localUserJoined = false;
+  late RtcEngine _engine;
+
   @override
   void initState() {
     super.initState();
     _startVideoCalling();
   }
-  // Initializes Agora SDK
+
   Future<void> _startVideoCalling() async {
     await _requestPermissions();
     await _initializeAgoraVideoSDK();
@@ -42,11 +32,11 @@ class _MainScreenScreenState extends State<MainScreen> {
     _setupEventHandlers();
     await _joinChannel();
   }
-  // Requests microphone and camera permissions
+
   Future<void> _requestPermissions() async {
     await [Permission.microphone, Permission.camera].request();
   }
-  // Set up the Agora RTC engine instance
+
   Future<void> _initializeAgoraVideoSDK() async {
     _engine = createAgoraRtcEngine();
     await _engine.initialize(const RtcEngineContext(
@@ -54,12 +44,12 @@ class _MainScreenScreenState extends State<MainScreen> {
       channelProfile: ChannelProfileType.channelProfileCommunication,
     ));
   }
-  // Enables and starts local video preview
+
   Future<void> _setupLocalVideo() async {
     await _engine.enableVideo();
     await _engine.startPreview();
   }
-  // Register an event handler for Agora RTC
+
   void _setupEventHandlers() {
     _engine.registerEventHandler(
       RtcEngineEventHandler(
@@ -78,7 +68,7 @@ class _MainScreenScreenState extends State<MainScreen> {
       ),
     );
   }
-  // Join a channel
+
   Future<void> _joinChannel() async {
     await _engine.joinChannel(
       token: token,
@@ -93,20 +83,31 @@ class _MainScreenScreenState extends State<MainScreen> {
       uid: 0,
     );
   }
+
   @override
   void dispose() {
     _cleanupAgoraEngine();
     super.dispose();
   }
-  // Leaves the channel and releases resources
+
   Future<void> _cleanupAgoraEngine() async {
     await _engine.leaveChannel();
     await _engine.release();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Agora Video Calling')),
+      appBar: AppBar(
+        title: const Text('Consulta em Andamento'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            _cleanupAgoraEngine();
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Stack(
         children: [
           Center(child: _remoteVideo()),
@@ -126,7 +127,7 @@ class _MainScreenScreenState extends State<MainScreen> {
       ),
     );
   }
-  // Displays remote video view
+
   Widget _localVideo() {
     return AgoraVideoView(
       controller: VideoViewController(
@@ -138,7 +139,7 @@ class _MainScreenScreenState extends State<MainScreen> {
       ),
     );
   }
-  // Displays remote video view
+
   Widget _remoteVideo() {
     if (_remoteUid != null) {
       return AgoraVideoView(
@@ -150,7 +151,7 @@ class _MainScreenScreenState extends State<MainScreen> {
       );
     } else {
       return const Text(
-        'Waiting for remote user to join...',
+        'Aguardando outro participante entrar na chamada...',
         textAlign: TextAlign.center,
       );
     }

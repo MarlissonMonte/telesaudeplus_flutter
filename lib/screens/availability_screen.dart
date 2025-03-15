@@ -16,24 +16,24 @@ class AvailabilityScreen extends StatefulWidget {
 
 class _AvailabilityScreenState extends State<AvailabilityScreen> {
   DateTime selectedDate = DateTime.now();
-  List<AppointmentTime> horarios = [];
+  List<AppointmentTime> appointments = [];
 
   @override
   void initState() {
     super.initState();
-    _atualizarHorarios();
+    _updateAppointments();
   }
 
-  void _atualizarHorarios() {
+  void _updateAppointments() {
     // Simulando horários disponíveis
-    horarios = [
-      AppointmentTime(hora: '09:10', medico: widget.doctor.nome, disponivel: true),
-      AppointmentTime(hora: '09:40', medico: widget.doctor.nome, disponivel: true),
-      AppointmentTime(hora: '11:50', medico: widget.doctor.nome, disponivel: true),
+    appointments = [
+      AppointmentTime(time: '09:10', doctorName: widget.doctor.name, available: true),
+      AppointmentTime(time: '09:40', doctorName: widget.doctor.name, available: true),
+      AppointmentTime(time: '11:50', doctorName: widget.doctor.name, available: true),
     ];
   }
 
-  Future<void> _selecionarData(BuildContext context) async {
+  Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
@@ -56,16 +56,16 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        _atualizarHorarios();
+        _updateAppointments();
       });
     }
   }
 
-  void _mostrarConfirmacao(BuildContext context, String horario) {
+  void _showConfirmation(BuildContext context, String time) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Consulta agendada com sucesso para $horario',
+          'Consulta agendada com sucesso para $time',
           style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
@@ -90,7 +90,7 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Especialidade: ${widget.doctor.especialidade}',
+              'Especialidade: ${widget.doctor.specialty}',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const Text(
@@ -112,12 +112,12 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
                       onPressed: () {
                         setState(() {
                           selectedDate = selectedDate.subtract(const Duration(days: 1));
-                          _atualizarHorarios();
+                          _updateAppointments();
                         });
                       },
                     ),
                     TextButton(
-                      onPressed: () => _selecionarData(context),
+                      onPressed: () => _selectDate(context),
                       child: Text(
                         '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
                         style: const TextStyle(
@@ -131,7 +131,7 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
                       onPressed: () {
                         setState(() {
                           selectedDate = selectedDate.add(const Duration(days: 1));
-                          _atualizarHorarios();
+                          _updateAppointments();
                         });
                       },
                     ),
@@ -142,9 +142,9 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: horarios.length,
+                itemCount: appointments.length,
                 itemBuilder: (context, index) {
-                  final horario = horarios[index];
+                  final appointment = appointments[index];
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8),
                     shape: RoundedRectangleBorder(
@@ -156,7 +156,7 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${horario.hora} - ${horario.medico}',
+                            '${appointment.time} - ${appointment.doctorName}',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -169,7 +169,7 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            onPressed: () => _mostrarConfirmacao(context, horario.hora),
+                            onPressed: () => _showConfirmation(context, appointment.time),
                             child: const Text(
                               'AGENDAR',
                               style: TextStyle(color: Colors.white),
