@@ -27,9 +27,9 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
   void _updateAppointments() {
     // Simulando horários disponíveis
     appointments = [
-      AppointmentTime(time: '09:10', doctorName: widget.doctor.name, available: true),
-      AppointmentTime(time: '09:40', doctorName: widget.doctor.name, available: true),
-      AppointmentTime(time: '11:50', doctorName: widget.doctor.name, available: true),
+      AppointmentTime(time: '09:10', doctorName: widget.doctor.nome, available: true),
+      AppointmentTime(time: '09:40', doctorName: widget.doctor.nome, available: true),
+      AppointmentTime(time: '11:50', doctorName: widget.doctor.nome, available: true),
     ];
   }
 
@@ -90,7 +90,7 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Especialidade: ${widget.doctor.specialty}',
+              'Especialidade: ${widget.doctor.especializacao}',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
             const Text(

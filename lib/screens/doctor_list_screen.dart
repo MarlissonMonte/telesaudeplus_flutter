@@ -52,8 +52,8 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
     setState(() {
       _filteredDoctors = _doctorList
           .where((doctor) =>
-              doctor.name.toLowerCase().contains(query.toLowerCase()) ||
-              doctor.specialty.toLowerCase().contains(query.toLowerCase()))
+              doctor.nome.toLowerCase().contains(query.toLowerCase()) ||
+              doctor.especializacao.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -144,7 +144,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              doctor.name,
+                                              doctor.nome,
                                               style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,
@@ -152,7 +152,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              doctor.specialty,
+                                              doctor.especializacao,
                                               style: TextStyle(
                                                 fontSize: 14,
                                                 color: Colors.grey[600],
