@@ -8,6 +8,7 @@ import '../screens/home_screen.dart';
 import '../screens/doctor_list_screen.dart';
 import '../screens/availability_screen.dart';
 import '../screens/video_call_screen.dart';
+import '../screens/horarios_disponiveis_screen.dart';
 import '../repositories/auth_repository.dart';
 import '../cubits/register/register_cubit.dart';
 import '../models/doctor.dart';
@@ -71,8 +72,9 @@ class AppRoutes {
     ),
     GetPage(
       name: availability,
-      page: () => AvailabilityScreen(
-        doctor: Get.arguments['doctor'] as Doctor,
+      page: () => HorariosDisponiveisScreen(
+        medicoId: (Get.arguments['doctor'] as Doctor).id.toString(),
+        medicoNome: (Get.arguments['doctor'] as Doctor).nome,
       ),
     ),
     GetPage(

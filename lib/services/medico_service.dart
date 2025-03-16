@@ -1,0 +1,38 @@
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class MedicoService {
+  
+    static const String baseUrl = 'http://10.0.2.2:3000';
+  
+
+  Future<List<DateTime>> getHorariosDisponiveis(String medicoId, DateTime data) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/medicos/horarios/$medicoId?data_inicial=${DateFormat('yyyy-MM-dd').format(data)}'),
+      );
+
+      print(response.statusCode);
+      print(medicoId);
+      if (response.statusCode == 200) {
+        print(response.body);
+        final decodedResponse = jsonDecode(response.body);
+
+        if (decodedResponse is List) {
+          final List<dynamic> horarios = decodedResponse;
+          print(horarios);
+          return horarios.map((horario) => DateTime.parse(horario)).toList();
+        } else if (decodedResponse is Map && decodedResponse.containsKey('message')) {
+          print(decodedResponse['message']);
+          throw Exception(decodedResponse['message']);
+        } else {
+          throw Exception('Resposta inesperada do servidor');
+        }
+      }
+      throw Exception('Erro ao buscar horários disponíveis');
+    } catch (e) {
+      throw Exception('Erro ao buscar horários disponíveis: $e');
+    }
+  }
+}

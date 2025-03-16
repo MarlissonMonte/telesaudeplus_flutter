@@ -144,7 +144,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              doctor.nome,
+                                              doctor.nome ?? 'Médico',
                                               style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold,

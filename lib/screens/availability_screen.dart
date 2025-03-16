@@ -27,9 +27,9 @@ class _AvailabilityScreenState extends State<AvailabilityScreen> {
   void _updateAppointments() {
     // Simulando horários disponíveis
     appointments = [
-      AppointmentTime(time: '09:10', doctorName: widget.doctor.nome, available: true),
-      AppointmentTime(time: '09:40', doctorName: widget.doctor.nome, available: true),
-      AppointmentTime(time: '11:50', doctorName: widget.doctor.nome, available: true),
+      AppointmentTime(time: '09:10', doctorName: widget.doctor.nome ?? 'Médico', available: true),
+      AppointmentTime(time: '09:40', doctorName: widget.doctor.nome ?? 'Médico', available: true),
+      AppointmentTime(time: '11:50', doctorName: widget.doctor.nome ?? 'Médico', available: true),
     ];
   }
 
