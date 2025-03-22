@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'routes/app_routes.dart';
-
-void main() {
+import 'services/firebase_messaging_service.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  final firebaseMessaging = FirebaseMessagingService();
+  await firebaseMessaging.initialize();
+  
   runApp(const MyApp());
 }
 

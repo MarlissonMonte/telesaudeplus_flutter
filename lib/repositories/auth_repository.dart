@@ -47,4 +47,17 @@ class AuthRepository {
       },
     );
   }
+
+  Future<Map<String, dynamic>> registerFCMToken({
+    required String userId,
+    required String fcmToken,
+  }) async {
+    return _apiService.post(
+      '/tokenFCM',
+      body: {
+        'id_usuario': userId,
+        'token': fcmToken,
+      },
+    );
+  }
 }

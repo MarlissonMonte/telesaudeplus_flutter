@@ -14,6 +14,7 @@ import '../cubits/register/register_cubit.dart';
 import '../models/doctor.dart';
 import '../services/api_service.dart';
 import '../cubits/login/login_cubit.dart';
+import '../services/firebase_messaging_service.dart';
 
 class AppRoutes {
   static const String welcome = '/';
@@ -26,6 +27,8 @@ class AppRoutes {
   static const String videoCall = '/video-call';
 
   static final apiService = ApiService();
+  static final authRepository = AuthRepository(apiService: apiService);
+  static final firebaseMessaging = FirebaseMessagingService();
 
   static List<GetPage> routes = [
     GetPage(
@@ -36,9 +39,8 @@ class AppRoutes {
       name: login,
       page: () => BlocProvider(
         create: (context) => LoginCubit(
-          authRepository: AuthRepository(
-            apiService: apiService,
-          ),
+          authRepository: authRepository,
+          firebaseMessaging: firebaseMessaging,
         ),
         child: const LoginScreen(),
       ),
