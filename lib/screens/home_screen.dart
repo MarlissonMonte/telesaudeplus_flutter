@@ -53,7 +53,8 @@ class HomeScreen extends StatelessWidget {
             _buildOptionCard(
               icon: Icons.video_camera_front,
               title: 'Entrar na consulta',
-              onTap: () => Get.toNamed(AppRoutes.videoCall),
+              onTap: () => Get.toNamed(AppRoutes.consultasAgendadas,
+                  arguments: {'id_usuario': id_usuario}),
             ),
           ],
         ),

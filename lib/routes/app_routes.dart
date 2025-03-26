@@ -15,7 +15,7 @@ import '../models/doctor.dart';
 import '../services/api_service.dart';
 import '../cubits/login/login_cubit.dart';
 import '../services/firebase_messaging_service.dart';
-
+import '../screens/consultas_agendadas_screen.dart';
 class AppRoutes {
   static const String welcome = '/';
   static const String login = '/login';
@@ -25,7 +25,7 @@ class AppRoutes {
   static const String doctorList = '/doctor-list';
   static const String availability = '/availability';
   static const String videoCall = '/video-call';
-
+  static const String consultasAgendadas = '/consultas-agendadas';
   static final apiService = ApiService();
   static final authRepository = AuthRepository(apiService: apiService);
   static final firebaseMessaging = FirebaseMessagingService();
@@ -78,6 +78,8 @@ class AppRoutes {
                 Get.arguments['id_usuario'] ?? "0", // Adicione esta linha
           ),
     ),
+    GetPage(name:consultasAgendadas,
+    page:()=>ConsultasAgendadasScreen(idUsuario:Get.arguments['id_usuario']??'0')),
     GetPage(name: videoCall, page: () => const VideoCallScreen()),
   ];
 }
