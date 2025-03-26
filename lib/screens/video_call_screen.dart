@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 const appId = "0bd5051c48e94ca799ad873e186a761e";
-const token = "007eJxTYFixskBtCnPNu6uSH5/4vPZZkjDB/O68mKzjXZUBuY6zGYMUGAySUkwNTA2TTSxSLU2SE80tLRNTLMyNUw0tzBLNzQxTezgvpTcEMjJcVGVnZGSAQBCfm6EktbgkNTEnsyAzn4EBAEvJIfE=";
-const channel = "testealipio";
+const token = "0060bd5051c48e94ca799ad873e186a761eIACrbbaWvp6oSx9IMbyCib0j5QM5qSPj59LGRhM20S+5Xw9JtOYh39v0IgBj7kjRnYDlZwQAAQAtPeRnAgAtPeRnAwAtPeRnBAAtPeRn";
+const channel = "teste";
 
 class VideoCallScreen extends StatefulWidget {
   const VideoCallScreen({Key? key}) : super(key: key);
@@ -17,6 +17,8 @@ class VideoCallScreen extends StatefulWidget {
 class _VideoCallScreenState extends State<VideoCallScreen> {
   int? _remoteUid;
   bool _localUserJoined = false;
+  bool _isMicMuted = false;
+  bool _isCameraOff = false;
   late RtcEngine _engine;
 
   @override
@@ -54,15 +56,12 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
     _engine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("Local user ${connection.localUid} joined");
           setState(() => _localUserJoined = true);
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint("Remote user $remoteUid joined");
           setState(() => _remoteUid = remoteUid);
         },
         onUserOffline: (RtcConnection connection, int remoteUid, UserOfflineReasonType reason) {
-          debugPrint("Remote user $remoteUid left");
           setState(() => _remoteUid = null);
         },
       ),
@@ -98,31 +97,22 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Consulta em Andamento'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            _cleanupAgoraEngine();
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
           Center(child: _remoteVideo()),
-          Align(
-            alignment: Alignment.topLeft,
+          Positioned(
+            top: 40,
+            left: 10,
             child: SizedBox(
               width: 100,
               height: 150,
-              child: Center(
-                child: _localUserJoined
-                    ? _localVideo()
-                    : const CircularProgressIndicator(),
-              ),
+              child: _localUserJoined
+                  ? _localVideo()
+                  : const CircularProgressIndicator(),
             ),
           ),
+          _controlPanel(),
         ],
       ),
     );
@@ -150,10 +140,54 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         ),
       );
     } else {
-      return const Text(
-        'Aguardando outro participante entrar na chamada...',
-        textAlign: TextAlign.center,
+      return const Center(
+        child: Text(
+          'Aguardando outro participante...',
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
       );
     }
+  }
+
+  Widget _controlPanel() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        color: Colors.black54,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: Icon(
+                _isMicMuted ? Icons.mic_off : Icons.mic,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                setState(() => _isMicMuted = !_isMicMuted);
+                _engine.muteLocalAudioStream(_isMicMuted);
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                _isCameraOff ? Icons.videocam_off : Icons.videocam,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                setState(() => _isCameraOff = !_isCameraOff);
+                _engine.muteLocalVideoStream(_isCameraOff);
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.call_end, color: Colors.red),
+              onPressed: () {
+                _cleanupAgoraEngine();
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
