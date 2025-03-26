@@ -35,4 +35,36 @@ class MedicoService {
       throw Exception('Erro ao buscar horários disponíveis: $e');
     }
   }
+
+  Future agendarConsulta(String usuarioId, String medicoId, DateTime horarioInicio, DateTime horarioFim) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/consultas-agendadas'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+          'id_usuario': usuarioId,
+          'id_medico': medicoId,
+          'horario_inicio': DateFormat('yyyy-MM-dd HH:mm').format(horarioInicio),
+          'horario_fim': DateFormat('yyyy-MM-dd HH:mm').format(horarioFim.add(Duration(minutes: 30))),
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print(response.body);
+        final decodedResponse = jsonDecode(response.body);
+
+        if (decodedResponse is Map && decodedResponse.containsKey('message')) {
+          print(decodedResponse['message']);
+          return;
+        } else {
+          throw Exception('Resposta inesperada do servidor');
+        }
+      }
+      throw Exception('Erro ao agendar consulta');
+    } catch (e) {
+      throw Exception('Erro ao agendar consulta: $e');
+    }
+  }
 }

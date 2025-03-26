@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/medico_service.dart';
+import '../cubits/login/login_state.dart';
 
 class HorariosDisponiveisScreen extends StatefulWidget {
   final String medicoId;
@@ -18,6 +19,7 @@ class HorariosDisponiveisScreen extends StatefulWidget {
 
 class _HorariosDisponiveisScreenState extends State<HorariosDisponiveisScreen> {
   final MedicoService _medicoService = MedicoService();
+  final LoginState _loginState = LoginState();
   DateTime _dataSelecionada = DateTime.now();
   List<DateTime> _horariosDisponiveis = [];
   bool _isLoading = false;
@@ -104,6 +106,12 @@ class _HorariosDisponiveisScreenState extends State<HorariosDisponiveisScreen> {
                       ),
                       onTap: () {
                         // TODO: Implementar a seleção do horário
+                        _medicoService.agendarConsulta(
+                          _loginState.id_usuario!,
+                          widget.medicoId,
+                          horario,
+                          horario.add(const Duration(minutes: 30)),
+                        );
                       },
                     ),
                   );
