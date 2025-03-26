@@ -37,7 +37,7 @@ class LoginCubit extends Cubit<LoginState> {
         }
 
         emit(
-          state.copyWith(status: LoginStatus.success, email: email, nome: nome),
+          state.copyWith(status: LoginStatus.success, email: email, nome: nome,id_usuario: userId),
         );
       } else {
         emit(

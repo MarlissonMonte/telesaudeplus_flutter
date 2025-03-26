@@ -47,7 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
         if (state.status == LoginStatus.success) {
           Get.offNamed(
             AppRoutes.home,
-            arguments: {'nomeClient': state.nome ?? 'Usuário'},
+            arguments: {'nomeClient': state.nome ?? 'Usuário',
+                        'id_usuario': state.id_usuario ?? '0'},
           );
         } else if (state.status == LoginStatus.failure) {
           Get.snackbar(
