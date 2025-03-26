@@ -34,7 +34,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
       });
 
       final doctors = await _doctorService.getDoctors();
-      
+
       setState(() {
         _doctorList = doctors;
         _filteredDoctors = doctors;
@@ -50,11 +50,16 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
 
   void _filterDoctors(String query) {
     setState(() {
-      _filteredDoctors = _doctorList
-          .where((doctor) =>
-              doctor.nome.toLowerCase().contains(query.toLowerCase()) ||
-              doctor.especializacao.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      _filteredDoctors =
+          _doctorList
+              .where(
+                (doctor) =>
+                    doctor.nome.toLowerCase().contains(query.toLowerCase()) ||
+                    doctor.especializacao.toLowerCase().contains(
+                      query.toLowerCase(),
+                    ),
+              )
+              .toList();
     });
   }
 
@@ -69,10 +74,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
         ),
         title: const Text('Agendar Consulta'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadDoctors,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadDoctors),
         ],
       ),
       body: Column(
@@ -96,123 +98,134 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
             ),
           ),
           Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _error != null
+            child:
+                _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : _error != null
                     ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Erro ao carregar médicos:\n$_error',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: _loadDoctors,
-                              child: const Text('Tentar novamente'),
-                            ),
-                          ],
-                        ),
-                      )
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Erro ao carregar médicos:\n$_error',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadDoctors,
+                            child: const Text('Tentar novamente'),
+                          ),
+                        ],
+                      ),
+                    )
                     : _filteredDoctors.isEmpty
-                        ? const Center(
-                            child: Text('Nenhum médico encontrado'),
-                          )
-                        : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: _filteredDoctors.length,
-                            itemBuilder: (context, index) {
-                              final doctor = _filteredDoctors[index];
-                              return Card(
-                                margin: const EdgeInsets.only(bottom: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
+                    ? const Center(child: Text('Nenhum médico encontrado'))
+                    : ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: _filteredDoctors.length,
+                      itemBuilder: (context, index) {
+                        final doctor = _filteredDoctors[index];
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage: NetworkImage(
+                                    doctor.imageUrl,
+                                  ),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Row(
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage: NetworkImage(doctor.imageUrl),
+                                      Text(
+                                        doctor.nome ?? 'Médico',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              doctor.nome ?? 'Médico',
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        doctor.especializacao,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'CRM: ${doctor.crm}',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600],
                                             ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              doctor.especializacao,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey[600],
-                                              ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Icon(
+                                            Icons.star,
+                                            size: 16,
+                                            color: Colors.amber,
+                                          ),
+                                          Text(
+                                            doctor.rating.toString(),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[600],
                                             ),
-                                            const SizedBox(height: 4),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'CRM: ${doctor.crm}',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.grey[600],
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Icon(
-                                                  Icons.star,
-                                                  size: 16,
-                                                  color: Colors.amber,
-                                                ),
-                                                Text(
-                                                  doctor.rating.toString(),
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.grey[600],
-                                                  ),
-                                                ),
-                                              ],
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.white,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              20,
                                             ),
-                                            const SizedBox(height: 8),
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.white,
-                                                elevation: 0,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(20),
-                                                  side: const BorderSide(color: Colors.blue),
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                Get.toNamed(
-                                                  AppRoutes.availability,
-                                                  arguments: {'doctor': doctor},
-                                                );
-                                              },
-                                              child: const Text(
-                                                'Ver disponibilidade',
-                                                style: TextStyle(color: Colors.blue),
-                                              ),
+                                            side: const BorderSide(
+                                              color: Colors.blue,
                                             ),
-                                          ],
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Get.toNamed(
+                                            AppRoutes.availability,
+                                            arguments: {
+                                              'doctor': doctor,
+                                              'id_usuario':
+                                                  Get.arguments['id_usuario'] ??
+                                                  '0',
+                                            },
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Ver disponibilidade',
+                                          style: TextStyle(color: Colors.blue),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              );
-                            },
+                              ],
+                            ),
                           ),
+                        );
+                      },
+                    ),
           ),
         ],
       ),
@@ -224,4 +237,4 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
     _searchController.dispose();
     super.dispose();
   }
-} 
+}

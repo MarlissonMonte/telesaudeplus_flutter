@@ -45,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status == LoginStatus.success) {
+          print("id_usuario: ${state.id_usuario}");
           Get.offNamed(
             AppRoutes.home,
             arguments: {'nomeClient': state.nome ?? 'Usuário',

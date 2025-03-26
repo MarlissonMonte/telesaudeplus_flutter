@@ -3,14 +3,17 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class MedicoService {
-  
-    static const String baseUrl = 'http://10.0.2.2:3000';
-  
+  static const String baseUrl = 'http://10.0.2.2:3000';
 
-  Future<List<DateTime>> getHorariosDisponiveis(String medicoId, DateTime data) async {
+  Future<List<DateTime>> getHorariosDisponiveis(
+    String medicoId,
+    DateTime data,
+  ) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/medicos/horarios/$medicoId?data_inicial=${DateFormat('yyyy-MM-dd').format(data)}'),
+        Uri.parse(
+          '$baseUrl/medicos/horarios/$medicoId?data_inicial=${DateFormat('yyyy-MM-dd').format(data)}',
+        ),
       );
 
       print(response.statusCode);
@@ -23,7 +26,8 @@ class MedicoService {
           final List<dynamic> horarios = decodedResponse;
           print(horarios);
           return horarios.map((horario) => DateTime.parse(horario)).toList();
-        } else if (decodedResponse is Map && decodedResponse.containsKey('message')) {
+        } else if (decodedResponse is Map &&
+            decodedResponse.containsKey('message')) {
           print(decodedResponse['message']);
           throw Exception(decodedResponse['message']);
         } else {
@@ -36,8 +40,14 @@ class MedicoService {
     }
   }
 
-  Future agendarConsulta(String usuarioId, String medicoId, DateTime horarioInicio, DateTime horarioFim) async {
+  Future<void> agendarConsulta(
+    String usuarioId,
+    String medicoId,
+    DateTime horarioInicio,
+    DateTime horarioFim,
+  ) async {
     try {
+      print("usuarioId:$usuarioId");
       final response = await http.post(
         Uri.parse('$baseUrl/consultas-agendadas'),
         headers: <String, String>{
@@ -46,23 +56,17 @@ class MedicoService {
         body: jsonEncode({
           'id_usuario': usuarioId,
           'id_medico': medicoId,
-          'horario_inicio': DateFormat('yyyy-MM-dd HH:mm').format(horarioInicio),
-          'horario_fim': DateFormat('yyyy-MM-dd HH:mm').format(horarioFim.add(Duration(minutes: 30))),
+          'horario_inicio': DateFormat(
+            'yyyy-MM-dd HH:mm',
+          ).format(horarioInicio),
+          'horario_fim': DateFormat('yyyy-MM-dd HH:mm').format(horarioFim),
         }),
       );
 
-      if (response.statusCode == 201) {
-        print(response.body);
-        final decodedResponse = jsonDecode(response.body);
-
-        if (decodedResponse is Map && decodedResponse.containsKey('message')) {
-          print(decodedResponse['message']);
-          return;
-        } else {
-          throw Exception('Resposta inesperada do servidor');
-        }
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['message'] ?? 'Erro ao agendar consulta');
       }
-      throw Exception('Erro ao agendar consulta');
     } catch (e) {
       throw Exception('Erro ao agendar consulta: $e');
     }

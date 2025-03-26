@@ -4,16 +4,18 @@ import '../routes/app_routes.dart';
 
 class HomeScreen extends StatelessWidget {
   final String nomeClient;
+  final String id_usuario;
 
   const HomeScreen({
     super.key,
     required this.nomeClient,
+    required this.id_usuario,
   });
 
   @override
   Widget build(BuildContext context) {
     final nome = nomeClient.isNotEmpty ? nomeClient : 'Usuário';
-    
+
     return Scaffold(
       backgroundColor: Colors.lightBlue[100],
       appBar: AppBar(
@@ -41,7 +43,11 @@ class HomeScreen extends StatelessWidget {
             _buildOptionCard(
               icon: Icons.calendar_today,
               title: 'Agendar uma consulta',
-              onTap: () => Get.toNamed(AppRoutes.doctorList),
+              onTap:
+                  () => Get.toNamed(
+                    AppRoutes.doctorList,
+                    arguments: {'id_usuario': id_usuario},
+                  ),
             ),
             const SizedBox(height: 20),
             _buildOptionCard(
@@ -62,17 +68,12 @@ class HomeScreen extends StatelessWidget {
   }) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(15),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 25,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
           child: Row(
             children: [
               Icon(icon, size: 30),
@@ -90,4 +91,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

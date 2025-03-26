@@ -31,57 +31,53 @@ class AppRoutes {
   static final firebaseMessaging = FirebaseMessagingService();
 
   static List<GetPage> routes = [
-    GetPage(
-      name: welcome,
-      page: () => const WelcomeScreen(),
-    ),
+    GetPage(name: welcome, page: () => const WelcomeScreen()),
     GetPage(
       name: login,
-      page: () => BlocProvider(
-        create: (context) => LoginCubit(
-          authRepository: authRepository,
-          firebaseMessaging: firebaseMessaging,
-        ),
-        child: const LoginScreen(),
-      ),
+      page:
+          () => BlocProvider(
+            create:
+                (context) => LoginCubit(
+                  authRepository: authRepository,
+                  firebaseMessaging: firebaseMessaging,
+                ),
+            child: const LoginScreen(),
+          ),
     ),
     GetPage(
       name: register,
-      page: () => BlocProvider(
-        create: (context) => RegisterCubit(
-          authRepository: AuthRepository(
-            apiService: apiService,
+      page:
+          () => BlocProvider(
+            create:
+                (context) => RegisterCubit(
+                  authRepository: AuthRepository(apiService: apiService),
+                ),
+            child: const RegisterScreen(),
           ),
-        ),
-        child: const RegisterScreen(),
-      ),
     ),
     GetPage(
       name: tokenValidation,
-      page: () => TokenValidationScreen(
-        email: Get.arguments['email'],
-      ),
+      page: () => TokenValidationScreen(email: Get.arguments['email']),
     ),
     GetPage(
       name: home,
-      page: () => HomeScreen(
-        nomeClient: Get.arguments['nomeClient'],
-      ),
+      page:
+          () => HomeScreen(
+            nomeClient: Get.arguments['nomeClient'],
+            id_usuario: Get.arguments['id_usuario'] ?? '0',
+          ),
     ),
-    GetPage(
-      name: doctorList,
-      page: () => const DoctorListScreen(),
-    ),
+    GetPage(name: doctorList, page: () => const DoctorListScreen()),
     GetPage(
       name: availability,
-      page: () => HorariosDisponiveisScreen(
-        medicoId: (Get.arguments['doctor'] as Doctor).id.toString(),
-        medicoNome: (Get.arguments['doctor'] as Doctor).nome,
-      ),
+      page:
+          () => HorariosDisponiveisScreen(
+            medicoId: (Get.arguments['doctor'] as Doctor).id.toString(),
+            medicoNome: (Get.arguments['doctor'] as Doctor).nome,
+            id_usuario:
+                Get.arguments['id_usuario'] ?? "0", // Adicione esta linha
+          ),
     ),
-    GetPage(
-      name: videoCall,
-      page: () => const VideoCallScreen(),
-    ),
+    GetPage(name: videoCall, page: () => const VideoCallScreen()),
   ];
 }
