@@ -24,7 +24,8 @@ class HorariosDisponiveisScreen extends StatefulWidget {
 
 class _HorariosDisponiveisScreenState extends State<HorariosDisponiveisScreen> {
   final MedicoService _medicoService = MedicoService();
-  DateTime _dataSelecionada = DateTime.now();
+  DateTime _dataSelecionada = DateTime.now().subtract(Duration(hours:3));
+  
   List<DateTime> _horariosDisponiveis = [];
   bool _isLoading = false;
 

@@ -2,10 +2,7 @@ import 'dart:async';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-const appId = "0bd5051c48e94ca799ad873e186a761e";
-const token = "007eJxTYFixskBtCnPNu6uSH5/4vPZZkjDB/O68mKzjXZUBuY6zGYMUGAySUkwNTA2TTSxSLU2SE80tLRNTLMyNUw0tzBLNzQxTezgvpTcEMjJcVGVnZGSAQBCfm6EktbgkNTEnsyAzn4EBAEvJIfE=";
-const channel = "testealipio";
+import 'package:get/get.dart';
 
 class VideoCallScreen extends StatefulWidget {
   const VideoCallScreen({Key? key}) : super(key: key);
@@ -18,10 +15,18 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   int? _remoteUid;
   bool _localUserJoined = false;
   late RtcEngine _engine;
+  
+  late String appId;
+  late String token;
+  late String channel;
 
   @override
   void initState() {
     super.initState();
+    final consulta = Get.arguments['consulta'];
+    token = consulta.rtcToken;
+    channel = 'consulta_${consulta.id}';
+    appId = "0bd5051c48e94ca799ad873e186a761e"; // Certifique-se de carregar do ambiente seguro
     _startVideoCalling();
   }
 
@@ -40,7 +45,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
   Future<void> _initializeAgoraVideoSDK() async {
     _engine = createAgoraRtcEngine();
     await _engine.initialize(const RtcEngineContext(
-      appId: appId,
+      appId: "0bd5051c48e94ca799ad873e186a761e",
       channelProfile: ChannelProfileType.channelProfileCommunication,
     ));
   }
@@ -146,7 +151,7 @@ class _VideoCallScreenState extends State<VideoCallScreen> {
         controller: VideoViewController.remote(
           rtcEngine: _engine,
           canvas: VideoCanvas(uid: _remoteUid),
-          connection: const RtcConnection(channelId: channel),
+          connection: RtcConnection(channelId: channel),
         ),
       );
     } else {

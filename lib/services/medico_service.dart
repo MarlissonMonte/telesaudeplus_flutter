@@ -57,7 +57,7 @@ class MedicoService {
           'id_usuario': usuarioId,
           'id_medico': medicoId,
           'horario_inicio': DateFormat('yyyy-MM-dd HH:mm:ss').format(horarioInicio),
-          'horario_fim': DateFormat('yyyy-MM-dd HH:mm:ss').format(horarioFim.add(Duration(minutes: 30))),
+          'horario_fim': DateFormat('yyyy-MM-dd HH:mm:ss').format(horarioFim),
         }),
       );
 

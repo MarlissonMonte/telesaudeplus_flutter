@@ -132,11 +132,11 @@ class _ConsultasAgendadasScreenState extends State<ConsultasAgendadasScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Data: ${DateFormat('dd/MM/yyyy').format(consulta.horarioInicio)}',
+                                  'Data: ${DateFormat('dd/MM/yyyy').format(consulta.horarioInicio.subtract(Duration(hours: 3)))}',
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 Text(
-                                  'Horário: ${DateFormat('HH:mm').format(consulta.horarioInicio)} - ${DateFormat('HH:mm').format(consulta.horarioFim)}',
+                                  'Horário: ${DateFormat('HH:mm').format(consulta.horarioInicio.subtract(Duration(hours:3)))} - ${DateFormat('HH:mm').format(consulta.horarioFim.subtract(Duration(hours:3)))}',
                                   style: const TextStyle(fontSize: 16),
                                 ),
                                 const SizedBox(height: 16),
