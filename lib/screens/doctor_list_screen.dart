@@ -138,7 +138,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                 CircleAvatar(
                                   radius: 30,
                                   backgroundImage: NetworkImage(
-                                    doctor.imageUrl,
+                                    doctor.imageUrl?? "https://via.placeholder.com/150",
                                   ),
                                 ),
                                 const SizedBox(width: 16),

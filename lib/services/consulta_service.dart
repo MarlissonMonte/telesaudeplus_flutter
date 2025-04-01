@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/consulta_agendada.dart';
 
 class ConsultaService {
-  final String baseUrl = 'http://10.0.2.2:3000';
+  final String baseUrl = 'https://teleconsultas.zapto.org';
 
   Future<List<ConsultaAgendada>> getConsultasAgendadas(String idUsuario) async {
     try {
