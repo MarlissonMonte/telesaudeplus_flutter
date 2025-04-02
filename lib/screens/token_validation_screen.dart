@@ -39,7 +39,7 @@ class _TokenValidationScreenState extends State<TokenValidationScreen> {
     if (token.length == 6) {
       try {
         final response = await http.post(
-          Uri.parse('http://10.0.2.2:3000/verificar-token'),
+          Uri.parse('https://teleconsultas.zapto.org/verificar-token'),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode({
             'email': widget.email,
@@ -89,7 +89,7 @@ class _TokenValidationScreenState extends State<TokenValidationScreen> {
   Future<void> _reenviarToken() async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/reenviar-token'),
+        Uri.parse('https://teleconsultas.zapto.org'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
           'email': widget.email,
